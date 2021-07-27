@@ -1,10 +1,11 @@
-import { Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { CreateAccountDto } from './dto/create-account.dto';
 
 @Controller('accounts')
 export class AccountsController {
   @Post()
-  create(): any {
-    //todo
+  create(@Body() createAccountDto: CreateAccountDto) {
+    return 'creates a new account';
   }
   //GET all accounts
   @Get()
