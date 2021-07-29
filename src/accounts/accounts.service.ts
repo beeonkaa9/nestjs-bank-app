@@ -5,6 +5,7 @@ import { Account } from './interfaces/account.interface';
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
+  private readonly account: Account['id'];
 
   create(account: Account) {
     this.accounts.push(account);
@@ -12,5 +13,9 @@ export class AccountsService {
 
   findAll(): Account[] {
     return this.accounts;
+  }
+
+  findOne(string): Account {
+    return this.account['id'];
   }
 }
