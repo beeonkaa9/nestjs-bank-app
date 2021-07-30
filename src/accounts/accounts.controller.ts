@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountsService } from './accounts.service';
-import { Account } from './interfaces/account.interface';
+import { Account } from './entities/accounts.entity';
 
 @Controller('accounts')
 export class AccountsController {

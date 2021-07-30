@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { Account } from './interfaces/account.interface';
+import { CreateAccountDto } from './dto/create-account.dto';
+import { Account } from './entities/accounts.entity';
 
 //data storage and retrieval (in memory)
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
-  private readonly account: Account['id'];
 
-  create(account: Account) {
-    this.accounts.push(account);
+  create(createAccountDto: CreateAccountDto) {
+    const newAccount = { ...createAccountDto };
+    this.accounts.push(newAccount);
   }
 
   findAll(): Account[] {
     return this.accounts;
   }
 
-  findOne(string): Account {
-    return this.account['id'];
+  findOne(accountId: string) {
+    return this.accounts.find((accounts) => accounts.id == accountId);
   }
 }
