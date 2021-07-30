@@ -5,6 +5,8 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountsService } from './accounts.service';
@@ -15,6 +17,7 @@ export class AccountsController {
   constructor(private accountsService: AccountsService) {}
 
   @Post()
+  @UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createAccountDto: CreateAccountDto) {
     this.accountsService.create(createAccountDto);
   }

@@ -1,12 +1,28 @@
-import { IsEmail, IsJSON, IsString, IsUUID } from 'class-validator';
+import {
+  isAlpha,
+  IsAlpha,
+  IsEmail,
+  IsInstance,
+  isInt,
+  IsJSON,
+  IsString,
+  IsUUID,
+} from 'class-validator';
+
+import { Type } from 'class-transformer';
+
+export class Balance {
+  amount: number;
+  currency: string;
+}
 export class CreateAccountDto {
   @IsUUID()
   id: string;
 
-  @IsString()
+  @IsAlpha()
   given_name: string;
 
-  @IsString()
+  @IsAlpha()
   family_name: string;
 
   @IsEmail()
@@ -17,9 +33,4 @@ export class CreateAccountDto {
 
   @IsJSON()
   balance: Balance;
-}
-
-interface Balance {
-  amount: number;
-  currency: string;
 }
