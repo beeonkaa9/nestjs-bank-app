@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -18,19 +19,22 @@ export class AccountsController {
 
   @Post()
   @UsePipes(new ValidationPipe({ transform: true }))
-  create(@Body() createAccountDto: CreateAccountDto) {
+  async create(@Body() createAccountDto: CreateAccountDto) {
     this.accountsService.create(createAccountDto);
   }
 
   //GET all accounts
   @Get()
-  findAll(): Account[] {
+  async findAll(): Promise<Account[]> {
     return this.accountsService.findAll();
   }
 
   //GET account by id
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    if (!id) {
+      throw new BadRequestException('user id was not found');
+    }
     return this.accountsService.findOne(id);
   }
 }
