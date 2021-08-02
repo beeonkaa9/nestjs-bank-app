@@ -8,7 +8,7 @@ export class Account {
   balance: Balance;
 }
 
-class Balance {
+export class Balance {
   amount: number;
   currency: string;
 }
