@@ -8,7 +8,7 @@ export class Account {
   balance: Balance;
 }
 
-interface Balance {
+class Balance {
   amount: number;
   currency: string;
 }

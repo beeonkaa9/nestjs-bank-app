@@ -6,8 +6,15 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   //validate incoming data
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
 
+  //swagger docs
   const config = new DocumentBuilder()
     .setTitle('Nest Bank App')
     .setDescription('Description for Nest Bank App API')

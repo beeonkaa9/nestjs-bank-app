@@ -1,18 +1,21 @@
+import { Type } from 'class-transformer';
 import {
-  isAlpha,
   IsAlpha,
   IsEmail,
-  IsInstance,
-  isInt,
-  IsJSON,
+  IsNotEmpty,
+  IsNumber,
   IsString,
   IsUUID,
+  Min,
+  ValidateNested,
 } from 'class-validator';
 
-import { Type } from 'class-transformer';
-
 export class Balance {
+  @IsNumber()
+  @Min(0)
   amount: number;
+
+  @IsAlpha()
   currency: string;
 }
 export class CreateAccountDto {
@@ -31,6 +34,8 @@ export class CreateAccountDto {
   @IsString()
   note: string;
 
-  @IsJSON()
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Balance)
   balance: Balance;
 }
