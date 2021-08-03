@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -32,8 +33,8 @@ export class AccountsController {
   //GET account by id
   @Get(':id')
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
-    if (!id) {
-      throw new BadRequestException('user id was not found');
+    if (!this.accountsService.findOne(id)) {
+      throw new NotFoundException('user id was not found');
     }
     return this.accountsService.findOne(id);
   }
