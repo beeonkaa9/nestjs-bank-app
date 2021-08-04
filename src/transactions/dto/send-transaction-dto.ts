@@ -14,6 +14,10 @@ export class CreateTransactionDto {
   id: string;
 
   @IsDefined()
+  @IsUUID()
+  target_account_id: string;
+
+  @IsDefined()
   @IsString()
   note: string;
 
