@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import { Transaction } from 'src/transactions/entities/transactions.entity';
+import { exception } from 'console';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -27,11 +28,17 @@ export class AccountsService {
 
   //returns an account based on accountId
   findOne(accountId: string) {
+    if (!this.accounts.find((accounts) => accounts.id == accountId)) {
+      throw new NotFoundException('an account does not exist for this user id');
+    }
     return this.accounts.find((accounts) => accounts.id == accountId);
   }
 
   //creates a transaction to add money for a specific account
   addMoney(createTransactionDto: CreateTransactionDto) {
+    if (!this.findOne(createTransactionDto.id)) {
+      throw new NotFoundException("an account doesn't exist for this user id");
+    }
     const newTransaction = { ...createTransactionDto };
     this.transactions.push(newTransaction);
   }

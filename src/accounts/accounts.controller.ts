@@ -62,9 +62,6 @@ export class AccountsController {
   */
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    if (!this.accountsService.findOne(id)) {
-      throw new NotFoundException('user id was not found');
-    }
     return this.accountsService.findOne(id);
   }
 
