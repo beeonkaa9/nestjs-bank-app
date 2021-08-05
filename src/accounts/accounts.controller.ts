@@ -6,8 +6,6 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountsService } from './accounts.service';

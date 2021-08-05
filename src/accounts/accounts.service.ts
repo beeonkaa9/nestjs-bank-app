@@ -8,7 +8,11 @@ import { Transaction } from 'src/transactions/entities/transactions.entity';
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
-  public readonly transactions: Transaction[] = [];
+  private readonly transactions: Transaction[] = [];
+
+  get transactionsArray(): Transaction[] {
+    return this.transactions;
+  }
 
   //creates a new account
   create(createAccountDto: CreateAccountDto) {
