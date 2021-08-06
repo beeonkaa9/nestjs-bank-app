@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
@@ -16,6 +20,12 @@ export class AccountsService {
 
   //creates a new account
   create(createAccountDto: CreateAccountDto) {
+    const accountId: string = createAccountDto.id;
+    if (this.accounts.find((accounts) => accounts.id == accountId)) {
+      throw new NotAcceptableException(
+        'an account already exists for this id; cannot make duplicate accounts',
+      );
+    }
     const newAccount = { ...createAccountDto };
     this.accounts.push(newAccount);
   }
