@@ -3,7 +3,6 @@ import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dt
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import { Transaction } from 'src/transactions/entities/transactions.entity';
-import { exception } from 'console';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -36,11 +35,18 @@ export class AccountsService {
 
   //creates a transaction to add money for a specific account
   addMoney(createTransactionDto: CreateTransactionDto) {
-    if (!this.findOne(createTransactionDto.id)) {
-      throw new NotFoundException("an account doesn't exist for this user id");
+    const accountId: string = createTransactionDto.id;
+
+    if (!this.findOne(accountId)) {
+      throw new NotFoundException('an account does not exist for this user id');
     }
+
     const newTransaction = { ...createTransactionDto };
     this.transactions.push(newTransaction);
+
+    //access account to add money
+    const account: Account = this.findOne(accountId);
+    account.balance.amount += newTransaction.amount_money.amount;
   }
 
   //find all transactions for a specific id

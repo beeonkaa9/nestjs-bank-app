@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
   Param,
   ParseUUIDPipe,
   Post,
@@ -20,7 +19,6 @@ export class AccountsController {
     Creates a specific account
    */
   @Post()
-  //@UsePipes(new ValidationPipe({ transform: true }))
   create(@Body() createAccountDto: CreateAccountDto) {
     this.accountsService.create(createAccountDto);
   }
