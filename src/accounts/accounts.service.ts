@@ -59,6 +59,27 @@ export class AccountsService {
     account.balance.amount += newTransaction.amount_money.amount;
   }
 
+  //creates a transaction to withdraw money for a specific account
+  withdraw(createTransactionDto: CreateTransactionDto) {
+    const accountId: string = createTransactionDto.id;
+
+    if (!this.findOne(accountId)) {
+      throw new NotFoundException('an account does not exist for this user id');
+    }
+
+    const newTransaction = { ...createTransactionDto };
+    this.transactions.push(newTransaction);
+
+    //access account to subtract money
+    const account: Account = this.findOne(accountId);
+    if (account.balance.amount < newTransaction.amount_money.amount) {
+      throw new NotAcceptableException(
+        'not enough money in balance to make this withdrawal',
+      );
+    }
+    account.balance.amount -= newTransaction.amount_money.amount;
+  }
+
   //find all transactions for a specific id
   findAllforId(accountId: string) {
     return this.transactions.find(

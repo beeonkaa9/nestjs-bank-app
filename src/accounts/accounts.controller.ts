@@ -35,8 +35,8 @@ export class AccountsController {
     create a transaction to remove money for a specific account
   */
   @Post(':accountId/transactions/withdraw')
-  withdraw(): string {
-    return 'withdrawal';
+  withdraw(@Body() createTransactionDto: CreateTransactionDto) {
+    this.accountsService.withdraw(createTransactionDto);
   }
 
   /*POST /accounts/{accountId}/transactions/send
