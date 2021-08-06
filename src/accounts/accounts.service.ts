@@ -13,7 +13,10 @@ import { Transaction } from 'src/transactions/entities/transactions.entity';
 export class AccountsService {
   private readonly accounts: Account[] = [];
   private readonly transactions: Transaction[] = [];
+  //@Inject()
+  //protected transactionsService: TransactionsService;
 
+  //getter to return transaction array to transactions service (for findAllTransactions)
   get transactionsArray(): Transaction[] {
     return this.transactions;
   }
@@ -82,8 +85,17 @@ export class AccountsService {
 
   //find all transactions for a specific id
   findAllforId(accountId: string) {
+    /*
     return this.transactions.find(
       (transactions) => transactions.id == accountId,
     );
+    */
+    let transactionsForId: Transaction[] = [];
+    for (const transaction of this.transactions) {
+      if (transaction.id === accountId) {
+        transactionsForId.push(transaction);
+      }
+    }
+    return transactionsForId;
   }
 }
