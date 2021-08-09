@@ -10,6 +10,11 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountsService } from './accounts.service';
 import { Account } from './entities/accounts.entity';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
+import {
+  sendTransaction,
+  Transaction,
+} from 'src/transactions/entities/transactions.entity';
+import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
 
 @Controller('accounts')
 export class AccountsController {
@@ -43,7 +48,7 @@ export class AccountsController {
     create a transaction to send money to a specific account
    */
   @Post(':accountId/transactions/send')
-  sendMoney(): string {
+  sendMoney(@Body() sendTransactionDto: SendTransactionDto): string {
     return 'money to send to specific account';
   }
 
@@ -59,7 +64,7 @@ export class AccountsController {
     retreive a specific account by its id
   */
   @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Account {
     return this.accountsService.findOne(id);
   }
 
@@ -67,7 +72,9 @@ export class AccountsController {
     retreive a list of ALL transactions for a specific account
   */
   @Get(':accountId/transactions')
-  findAllforId(@Param('accountId', ParseUUIDPipe) accountId: string) {
+  findAllforId(
+    @Param('accountId', ParseUUIDPipe) accountId: string,
+  ): Transaction[] {
     return this.accountsService.findAllforId(accountId);
   }
 }

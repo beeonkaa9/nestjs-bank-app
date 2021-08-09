@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Balance } from 'src/accounts/dto/create-account.dto';
 
-export class CreateTransactionDto {
+export class SendTransactionDto {
   @IsDefined()
   @IsUUID()
   id: string;

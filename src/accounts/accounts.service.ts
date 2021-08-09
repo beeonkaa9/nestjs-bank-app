@@ -7,6 +7,7 @@ import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dt
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import { Transaction } from 'src/transactions/entities/transactions.entity';
+import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -83,13 +84,16 @@ export class AccountsService {
     account.balance.amount -= newTransaction.amount_money.amount;
   }
 
+  //send money to another account
+  sendMoney(sendTransactionDto: SendTransactionDto) {
+    /*TODO: +ensure that money sent is between 1 and 1000
+      +ensure that money sent cannot be more than balance
+      +ensure that transaction goes through completely (error checking, promises(?), ACID principles)
+    */
+  }
+
   //find all transactions for a specific id
   findAllforId(accountId: string) {
-    /*
-    return this.transactions.find(
-      (transactions) => transactions.id == accountId,
-    );
-    */
     let transactionsForId: Transaction[] = [];
     for (const transaction of this.transactions) {
       if (transaction.id === accountId) {
