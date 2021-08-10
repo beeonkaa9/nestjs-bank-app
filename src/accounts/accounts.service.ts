@@ -8,6 +8,7 @@ import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import { Transaction } from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
+import { sendMoneyValidation } from './functions/serviceExtraFunctions';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -86,10 +87,23 @@ export class AccountsService {
 
   //send money to another account
   sendMoney(sendTransactionDto: SendTransactionDto) {
-    /*TODO: +ensure that money sent is between 1 and 1000
-      +ensure that money sent cannot be more than balance
+    /*TODO: 
       +ensure that transaction goes through completely (error checking, promises(?), ACID principles)
     */
+    const amountToSend = sendTransactionDto.amount_money.amount;
+    const idBalance = this.findOne(sendTransactionDto.id).balance.amount;
+
+    if (
+      !this.findOne(sendTransactionDto.target_account_id) ||
+      !this.findOne(sendTransactionDto.id)
+    ) {
+      throw new NotFoundException(
+        'either the target account id or the account id does not exist',
+      );
+    }
+
+    //perform the checks to ensure it is a valid transaction
+    sendMoneyValidation(amountToSend, idBalance);
   }
 
   //find all transactions for a specific id

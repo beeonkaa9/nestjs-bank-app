@@ -48,8 +48,8 @@ export class AccountsController {
     create a transaction to send money to a specific account
    */
   @Post(':accountId/transactions/send')
-  sendMoney(@Body() sendTransactionDto: SendTransactionDto): string {
-    return 'money to send to specific account';
+  sendMoney(@Body() sendTransactionDto: SendTransactionDto) {
+    return this.accountsService.sendMoney(sendTransactionDto);
   }
 
   /*GET /accounts/
