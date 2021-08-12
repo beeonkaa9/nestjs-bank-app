@@ -1,12 +1,8 @@
 import {
-  forwardRef,
-  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
-  OnModuleInit,
 } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
@@ -15,18 +11,13 @@ import {
   Transaction,
 } from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
-import { SendMoneyLogic } from './functions/sendMoneyLogic';
+import { sendMoneyValidation } from './functions/sendMoneyLogic';
 
 //data storage and retrieval (in memory)
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
   private readonly transactions: (Transaction | sendTransaction)[] = [];
-
-  constructor(
-    @Inject(forwardRef(() => SendMoneyLogic))
-    private sendMoneyLogic: SendMoneyLogic,
-  ) {}
 
   //getter to return transaction array to transactions service (for findAllTransactions)
   get transactionsArray(): Transaction[] {
@@ -106,13 +97,14 @@ export class AccountsService {
     const idBalance: number = this.findOne(senderId).balance.amount;
 
     //to perform the send; withdraw from sender and add to receiver
-    const targetTransaction: CreateTransactionDto = {
-      id: sendTransactionDto.target_account_id,
+    const senderTransaction: CreateTransactionDto = {
+      id: sendTransactionDto.id,
       note: sendTransactionDto.note,
       amount_money: sendTransactionDto.amount_money,
     };
-    const withdrawTransaction: CreateTransactionDto = {
-      id: sendTransactionDto.id,
+
+    const targetTransaction: CreateTransactionDto = {
+      id: sendTransactionDto.target_account_id,
       note: sendTransactionDto.note,
       amount_money: sendTransactionDto.amount_money,
     };
@@ -123,13 +115,22 @@ export class AccountsService {
       );
     }
 
-    //perform the checks to ensure it is a valid transaction
-    this.sendMoneyLogic.sendMoneyValidation(amountToSend, idBalance);
+    /*does all the checks for the following business rules:
+    +ensure that money sent is between 1 and 1000
+    +ensure that money sent cannot be more than balance
+    +cannot send money if balance is zero
+    */
+    sendMoneyValidation(amountToSend, idBalance);
 
     //make sure transaction goes through completely
-    this.sendMoneyLogic.makeTransaction(withdrawTransaction, targetTransaction);
+    try {
+      this.withdraw(senderTransaction);
+      this.addMoney(targetTransaction);
+    } catch (e) {
+      return 'something went wrong' + e;
+    }
 
-    //push to transaction array
+    //push the send transaction to transaction array
     const newTransaction = { ...sendTransactionDto };
     this.transactions.push(newTransaction);
   }
