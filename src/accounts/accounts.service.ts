@@ -1,22 +1,29 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
+  OnModuleInit,
 } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import { Transaction } from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
-import { sendMoneyValidation } from './functions/serviceExtraFunctions';
+import { SendMoneyLogic } from './functions/sendMoneyLogic';
 
 //data storage and retrieval (in memory)
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
   private readonly transactions: Transaction[] = [];
-  //@Inject()
-  //protected transactionsService: TransactionsService;
+
+  constructor(
+    @Inject(forwardRef(() => SendMoneyLogic))
+    private sendMoneyLogic: SendMoneyLogic,
+  ) {}
 
   //getter to return transaction array to transactions service (for findAllTransactions)
   get transactionsArray(): Transaction[] {
@@ -89,21 +96,21 @@ export class AccountsService {
   sendMoney(sendTransactionDto: SendTransactionDto) {
     /*TODO: 
       +ensure that transaction goes through completely (error checking, promises(?), ACID principles)
+      +make sure this gets pushed into the transactions array
     */
-    const amountToSend = sendTransactionDto.amount_money.amount;
-    const idBalance = this.findOne(sendTransactionDto.id).balance.amount;
+    const senderId: string = sendTransactionDto.id;
+    const targetId: string = sendTransactionDto.target_account_id;
+    const amountToSend: number = sendTransactionDto.amount_money.amount;
+    const idBalance: number = this.findOne(senderId).balance.amount;
 
-    if (
-      !this.findOne(sendTransactionDto.target_account_id) ||
-      !this.findOne(sendTransactionDto.id)
-    ) {
+    if (!this.findOne(targetId) || !this.findOne(senderId)) {
       throw new NotFoundException(
         'either the target account id or the account id does not exist',
       );
     }
 
     //perform the checks to ensure it is a valid transaction
-    sendMoneyValidation(amountToSend, idBalance);
+    this.sendMoneyLogic.sendMoneyValidation(amountToSend, idBalance);
   }
 
   //find all transactions for a specific id
