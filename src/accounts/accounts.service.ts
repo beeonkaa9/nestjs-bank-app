@@ -102,6 +102,16 @@ export class AccountsService {
     const targetId: string = sendTransactionDto.target_account_id;
     const amountToSend: number = sendTransactionDto.amount_money.amount;
     const idBalance: number = this.findOne(senderId).balance.amount;
+    const targetTransaction: CreateTransactionDto = {
+      id: sendTransactionDto.target_account_id,
+      note: sendTransactionDto.note,
+      amount_money: sendTransactionDto.amount_money,
+    };
+    const withdrawTransaction: CreateTransactionDto = {
+      id: sendTransactionDto.id,
+      note: sendTransactionDto.note,
+      amount_money: sendTransactionDto.amount_money,
+    };
 
     if (!this.findOne(targetId) || !this.findOne(senderId)) {
       throw new NotFoundException(
@@ -111,6 +121,13 @@ export class AccountsService {
 
     //perform the checks to ensure it is a valid transaction
     this.sendMoneyLogic.sendMoneyValidation(amountToSend, idBalance);
+
+    //make sure transaction goes through completely
+    this.sendMoneyLogic.makeTransaction(withdrawTransaction, targetTransaction);
+
+    //push to transaction array
+    const newTransaction = { ...sendTransactionDto };
+    this.transactions.push(newTransaction);
   }
 
   //find all transactions for a specific id
