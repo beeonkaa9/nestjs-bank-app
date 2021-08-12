@@ -33,6 +33,7 @@ export class SendMoneyLogic {
     }
   }
 
+  //function for ensuring that transaction goes through completely(ACID)
   makeTransaction(sender: CreateTransactionDto, target: CreateTransactionDto) {
     try {
       this.accountsService.withdraw(sender);

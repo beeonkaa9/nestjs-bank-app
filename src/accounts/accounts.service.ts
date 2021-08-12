@@ -10,7 +10,10 @@ import { ModuleRef } from '@nestjs/core';
 import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
-import { Transaction } from 'src/transactions/entities/transactions.entity';
+import {
+  sendTransaction,
+  Transaction,
+} from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
 import { SendMoneyLogic } from './functions/sendMoneyLogic';
 
@@ -18,7 +21,7 @@ import { SendMoneyLogic } from './functions/sendMoneyLogic';
 @Injectable()
 export class AccountsService {
   private readonly accounts: Account[] = [];
-  private readonly transactions: Transaction[] = [];
+  private readonly transactions: (Transaction | sendTransaction)[] = [];
 
   constructor(
     @Inject(forwardRef(() => SendMoneyLogic))
@@ -94,14 +97,15 @@ export class AccountsService {
 
   //send money to another account
   sendMoney(sendTransactionDto: SendTransactionDto) {
-    /*TODO: 
-      +ensure that transaction goes through completely (error checking, promises(?), ACID principles)
-      +make sure this gets pushed into the transactions array
-    */
+    //to check if id and target_account_id exist
     const senderId: string = sendTransactionDto.id;
     const targetId: string = sendTransactionDto.target_account_id;
+
+    //for the validation checks on the sender account's balance and amount to be sent
     const amountToSend: number = sendTransactionDto.amount_money.amount;
     const idBalance: number = this.findOne(senderId).balance.amount;
+
+    //to perform the send; withdraw from sender and add to receiver
     const targetTransaction: CreateTransactionDto = {
       id: sendTransactionDto.target_account_id,
       note: sendTransactionDto.note,
@@ -132,7 +136,7 @@ export class AccountsService {
 
   //find all transactions for a specific id
   findAllforId(accountId: string) {
-    let transactionsForId: Transaction[] = [];
+    const transactionsForId: Transaction[] = [];
     for (const transaction of this.transactions) {
       if (transaction.id === accountId) {
         transactionsForId.push(transaction);
