@@ -3,14 +3,14 @@ import {
   NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
+import { CreateTransactionDto } from 'src/transactions/dto/create-transaction.dto';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { Account } from './entities/accounts.entity';
 import {
   sendTransaction,
   Transaction,
 } from 'src/transactions/entities/transactions.entity';
-import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
+import { SendTransactionDto } from 'src/transactions/dto/send-transaction.dto';
 import { sendMoneyValidation } from './functions/sendMoneyLogic';
 
 //data storage and retrieval (in memory)
@@ -138,6 +138,10 @@ export class AccountsService {
   //find all transactions for a specific id
   findAllforId(accountId: string) {
     const transactionsForId: Transaction[] = [];
+    if (!this.findOne(accountId)) {
+      throw new NotFoundException('an account does not exist for this user id');
+    }
+
     for (const transaction of this.transactions) {
       if (transaction.id === accountId) {
         transactionsForId.push(transaction);

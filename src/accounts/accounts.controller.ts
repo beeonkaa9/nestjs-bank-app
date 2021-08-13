@@ -9,13 +9,12 @@ import {
 import { CreateAccountDto } from './dto/create-account.dto';
 import { AccountsService } from './accounts.service';
 import { Account } from './entities/accounts.entity';
-import { CreateTransactionDto } from 'src/transactions/dto/create-transaction-dto';
-import {
-  sendTransaction,
-  Transaction,
-} from 'src/transactions/entities/transactions.entity';
-import { SendTransactionDto } from 'src/transactions/dto/send-transaction-dto';
+import { CreateTransactionDto } from 'src/transactions/dto/create-transaction.dto';
+import { Transaction } from 'src/transactions/entities/transactions.entity';
+import { SendTransactionDto } from 'src/transactions/dto/send-transaction.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('accounts')
 @Controller('accounts')
 export class AccountsController {
   constructor(private accountsService: AccountsService) {}
