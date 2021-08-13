@@ -12,6 +12,7 @@ import {
 } from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction.dto';
 import { sendMoneyValidation } from './functions/sendMoneyLogic';
+import { AccountsModule } from './accounts.module';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -32,8 +33,14 @@ export class AccountsService {
         'an account already exists for this id; cannot make duplicate accounts',
       );
     }
+    /*
     const newAccount = { ...createAccountDto };
     this.accounts.push(newAccount);
+    */
+    function newAccount(accounts, createAccountDto) {
+      return [...accounts, { createAccountDto }];
+    }
+    newAccount(this.accounts, createAccountDto);
   }
 
   //returns all accounts
