@@ -10,14 +10,17 @@ import {
 import { Balance } from 'src/accounts/dto/create-account.dto';
 
 export class CreateTransactionDto {
-  @ApiProperty()
   @IsDefined()
   @IsUUID()
+  @ApiProperty({
+    type: 'uuid',
+    example: '9e28507a-632f-44a6-99a7-98695cf2adcf',
+  })
   id: string;
 
-  @ApiProperty()
   @IsDefined()
   @IsString()
+  @ApiProperty({ type: 'string', example: 'rent money' })
   note: string;
 
   @ApiProperty()
