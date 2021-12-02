@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
@@ -19,7 +20,8 @@ import { ApiTags } from '@nestjs/swagger';
 export class AccountsController {
   constructor(private accountsService: AccountsService) {}
 
-  /*POST /accounts/
+  /*
+    POST /accounts/
     Creates a specific account
    */
   @Post()
@@ -27,7 +29,8 @@ export class AccountsController {
     this.accountsService.create(createAccountDto);
   }
 
-  /*POST /accounts/{accountId}/transactions/add
+  /*
+    POST /accounts/{accountId}/transactions/add
     create a transaction to add money for a specific account
   */
   @Post(':accountId/transactions/add')
@@ -35,7 +38,8 @@ export class AccountsController {
     this.accountsService.addMoney(createTransactionDto);
   }
 
-  /*POST /accounts/{accountId}/transactions/withdraw
+  /*
+    POST /accounts/{accountId}/transactions/withdraw
     create a transaction to remove money for a specific account
   */
   @Post(':accountId/transactions/withdraw')
@@ -43,7 +47,8 @@ export class AccountsController {
     this.accountsService.withdraw(createTransactionDto);
   }
 
-  /*POST /accounts/{accountId}/transactions/send
+  /*
+    POST /accounts/{accountId}/transactions/send
     create a transaction to send money to a specific account
    */
   @Post(':accountId/transactions/send')
@@ -51,7 +56,8 @@ export class AccountsController {
     return this.accountsService.sendMoney(sendTransactionDto);
   }
 
-  /*GET /accounts/
+  /*
+    GET /accounts/
     Retrieve a list of all accounts in the system
   */
   @Get()
@@ -59,7 +65,8 @@ export class AccountsController {
     return this.accountsService.findAll();
   }
 
-  /*GET /accounts/id
+  /*
+    GET /accounts/id
     retreive a specific account by its id
   */
   @Get(':id')
@@ -67,7 +74,17 @@ export class AccountsController {
     return this.accountsService.findOne(id);
   }
 
-  /*GET /accounts/{accountId}/transactions
+  /*
+    DELETE /accounts/
+    Deletes a specific account
+   */
+  @Delete(':id')
+  deleteAccount(@Param('id') id: string) {
+    return this.accountsService.deleteAccount(id);
+  }
+
+  /*
+    GET /accounts/{accountId}/transactions
     retreive a list of ALL transactions for a specific account
   */
   @Get(':accountId/transactions')

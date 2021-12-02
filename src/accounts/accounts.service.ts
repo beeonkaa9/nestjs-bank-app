@@ -124,6 +124,10 @@ export class AccountsService {
     this.transactions = [...this.transactions, { ...sendTransactionDto }];
   }
 
+  deleteAccount(id: string) {
+    this.accounts = this.accounts.filter((account) => account.id != id);
+  }
+
   findAllforId(accountId: string) {
     if (!this.findOne(accountId)) {
       throw new NotFoundException('an account does not exist for this user id');
