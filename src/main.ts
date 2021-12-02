@@ -15,6 +15,8 @@ async function bootstrap() {
     }),
   );
 
+  app.enableCors({ origin: '*' });
+
   //swagger docs
   const config = new DocumentBuilder()
     .setTitle('Nest Bank App')
