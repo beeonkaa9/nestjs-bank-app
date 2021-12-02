@@ -8,13 +8,13 @@ import { NotAcceptableException } from '@nestjs/common';
 export function sendMoneyValidation(amountToSend: number, balance: number) {
   if (amountToSend < 1 || amountToSend > 1000) {
     throw new NotAcceptableException(
-      'amount in amount_money is less than 1 or more than 1000',
+      'Amount of money must be greater than 0 or less than 1001',
     );
   } else if (balance === 0) {
-    throw new NotAcceptableException('cannot send money; balance is zero');
+    throw new NotAcceptableException('Cannot send money when balance is zero');
   } else if (balance < amountToSend && balance != 0) {
     throw new NotAcceptableException(
-      'amount in amount_money is larger than balance available',
+      'Amount of money is larger than balance available',
     );
   }
 }
