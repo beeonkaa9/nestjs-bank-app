@@ -11,7 +11,7 @@ import {
   Transaction,
 } from 'src/transactions/entities/transactions.entity';
 import { SendTransactionDto } from 'src/transactions/dto/send-transaction.dto';
-import { sendMoneyValidation } from './functions/sendMoneyLogic';
+import { sendMoneyValidation } from './utils/sendMoneyLogic';
 
 //data storage and retrieval (in memory)
 @Injectable()
@@ -84,19 +84,6 @@ export class AccountsService {
     const amountToSend: number = sendTransactionDto.amount_money.amount;
     const senderBalance: number = this.findOne(senderId).balance.amount;
 
-    //to perform the send; withdraw from sender and add to receiver
-    const senderTransaction: CreateTransactionDto = {
-      id: sendTransactionDto.id,
-      note: sendTransactionDto.note,
-      amount_money: sendTransactionDto.amount_money,
-    };
-
-    const targetTransaction: CreateTransactionDto = {
-      id: sendTransactionDto.target_account_id,
-      note: sendTransactionDto.note,
-      amount_money: sendTransactionDto.amount_money,
-    };
-
     if (!this.findOne(targetId) || !this.findOne(senderId)) {
       throw new NotFoundException(
         'Either the target account id or the account id does not exist',
@@ -113,10 +100,15 @@ export class AccountsService {
 
     //make sure transaction goes through completely
     try {
-      this.withdraw(senderTransaction);
-      this.addMoney(targetTransaction);
+      //make the withdrawal from sender
+      const senderAccount: Account = this.findOne(senderId);
+      senderAccount.balance.amount -= amountToSend;
+
+      //add money to target account
+      const targetAccount: Account = this.findOne(targetId);
+      targetAccount.balance.amount += amountToSend;
     } catch (e) {
-      return 'something went wrong' + e.message;
+      return 'Something went wrong:' + e.message;
     }
 
     this.transactions = [...this.transactions, { ...sendTransactionDto }];
