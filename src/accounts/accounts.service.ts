@@ -27,9 +27,7 @@ export class AccountsService {
   create(createAccountDto: CreateAccountDto) {
     const accountId: string = createAccountDto.id;
     if (this.accounts.find((accounts) => accounts.id === accountId)) {
-      throw new NotAcceptableException(
-        'an account already exists for this id; cannot make duplicate accounts',
-      );
+      throw new NotAcceptableException('An account already exists for this id');
     }
     this.accounts = [...this.accounts, { ...createAccountDto }];
   }
@@ -40,7 +38,7 @@ export class AccountsService {
 
   findOne(accountId: string) {
     if (!this.accounts.find((accounts) => accounts.id === accountId)) {
-      throw new NotFoundException('an account does not exist for this user id');
+      throw new NotFoundException('An account does not exist for this user id');
     }
     return this.accounts.find((accounts) => accounts.id === accountId);
   }
@@ -49,7 +47,7 @@ export class AccountsService {
     const accountId: string = createTransactionDto.id;
 
     if (!this.findOne(accountId)) {
-      throw new NotFoundException('an account does not exist for this user id');
+      throw new NotFoundException('An account does not exist for this user id');
     }
 
     this.transactions = [...this.transactions, { ...createTransactionDto }];
@@ -72,7 +70,7 @@ export class AccountsService {
     const account: Account = this.findOne(accountId);
     if (account.balance.amount < createTransactionDto.amount_money.amount) {
       throw new NotAcceptableException(
-        'not enough money in balance to make this withdrawal',
+        'Not enough money in balance to make this withdrawal',
       );
     }
     account.balance.amount -= createTransactionDto.amount_money.amount;
@@ -101,7 +99,7 @@ export class AccountsService {
 
     if (!this.findOne(targetId) || !this.findOne(senderId)) {
       throw new NotFoundException(
-        'either the target account id or the account id does not exist',
+        'Either the target account id or the account id does not exist',
       );
     }
 
@@ -124,13 +122,23 @@ export class AccountsService {
     this.transactions = [...this.transactions, { ...sendTransactionDto }];
   }
 
-  deleteAccount(id: string) {
-    this.accounts = this.accounts.filter((account) => account.id != id);
+  deleteAccount(accountId: string) {
+    if (!this.findOne(accountId)) {
+      throw new NotFoundException('An account does not exist for this user id');
+    }
+
+    const account: Account = this.findOne(accountId);
+    if (account.balance.amount != 0) {
+      throw new NotAcceptableException(
+        'Cannot delete account when balance is not zero',
+      );
+    }
+    this.accounts = this.accounts.filter((account) => account.id != accountId);
   }
 
   findAllforId(accountId: string) {
     if (!this.findOne(accountId)) {
-      throw new NotFoundException('an account does not exist for this user id');
+      throw new NotFoundException('An account does not exist for this user id');
     }
 
     const transactionsOfId = this.transactions.filter(
